@@ -1,8 +1,14 @@
-# path-browserify change log
+# path-browserify-win32 change log
 
 All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
+
+## 2.0.0
+The `path-browserify` package hasn't been updated in 4 years and was stuck on
+the Node.js 10.3 API, so pretty much all the code was replaced to add the win32
+functions and bring it up-to-date with the latest Node.js 23.4 API. There are
+probably loads of breaking changes.
 
 ## 1.0.1
 * Fix a duplicate test name.

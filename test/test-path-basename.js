@@ -1,79 +1,76 @@
 'use strict';
-var tape = require('tape');
-var path = require('../');
+require('./common');
+const assert = require('assert');
+const path = require('../');
 
-tape('path.basename', function (t) {
-  t.strictEqual(path.basename(__filename), 'test-path-basename.js');
-  t.strictEqual(path.basename(__filename, '.js'), 'test-path-basename');
-  t.strictEqual(path.basename('.js', '.js'), '');
-  t.strictEqual(path.basename(''), '');
-  t.strictEqual(path.basename('/dir/basename.ext'), 'basename.ext');
-  t.strictEqual(path.basename('/basename.ext'), 'basename.ext');
-  t.strictEqual(path.basename('basename.ext'), 'basename.ext');
-  t.strictEqual(path.basename('basename.ext/'), 'basename.ext');
-  t.strictEqual(path.basename('basename.ext//'), 'basename.ext');
-  t.strictEqual(path.basename('aaa/bbb', '/bbb'), 'bbb');
-  t.strictEqual(path.basename('aaa/bbb', 'a/bbb'), 'bbb');
-  t.strictEqual(path.basename('aaa/bbb', 'bbb'), 'bbb');
-  t.strictEqual(path.basename('aaa/bbb//', 'bbb'), 'bbb');
-  t.strictEqual(path.basename('aaa/bbb', 'bb'), 'b');
-  t.strictEqual(path.basename('aaa/bbb', 'b'), 'bb');
-  t.strictEqual(path.basename('/aaa/bbb', '/bbb'), 'bbb');
-  t.strictEqual(path.basename('/aaa/bbb', 'a/bbb'), 'bbb');
-  t.strictEqual(path.basename('/aaa/bbb', 'bbb'), 'bbb');
-  t.strictEqual(path.basename('/aaa/bbb//', 'bbb'), 'bbb');
-  t.strictEqual(path.basename('/aaa/bbb', 'bb'), 'b');
-  t.strictEqual(path.basename('/aaa/bbb', 'b'), 'bb');
-  t.strictEqual(path.basename('/aaa/bbb'), 'bbb');
-  t.strictEqual(path.basename('/aaa/'), 'aaa');
-  t.strictEqual(path.basename('/aaa/b'), 'b');
-  t.strictEqual(path.basename('/a/b'), 'b');
-  t.strictEqual(path.basename('//a'), 'a');
-  t.end();
-})
+assert.strictEqual(path.basename(__filename), 'test-path-basename.js');
+assert.strictEqual(path.basename(__filename, '.js'), 'test-path-basename');
+assert.strictEqual(path.basename('.js', '.js'), '');
+assert.strictEqual(path.basename('js', '.js'), 'js');
+assert.strictEqual(path.basename('file.js', '.ts'), 'file.js');
+assert.strictEqual(path.basename('file', '.js'), 'file');
+assert.strictEqual(path.basename('file.js.old', '.js.old'), 'file');
+assert.strictEqual(path.basename(''), '');
+assert.strictEqual(path.basename('/dir/basename.ext'), 'basename.ext');
+assert.strictEqual(path.basename('/basename.ext'), 'basename.ext');
+assert.strictEqual(path.basename('basename.ext'), 'basename.ext');
+assert.strictEqual(path.basename('basename.ext/'), 'basename.ext');
+assert.strictEqual(path.basename('basename.ext//'), 'basename.ext');
+assert.strictEqual(path.basename('aaa/bbb', '/bbb'), 'bbb');
+assert.strictEqual(path.basename('aaa/bbb', 'a/bbb'), 'bbb');
+assert.strictEqual(path.basename('aaa/bbb', 'bbb'), 'bbb');
+assert.strictEqual(path.basename('aaa/bbb//', 'bbb'), 'bbb');
+assert.strictEqual(path.basename('aaa/bbb', 'bb'), 'b');
+assert.strictEqual(path.basename('aaa/bbb', 'b'), 'bb');
+assert.strictEqual(path.basename('/aaa/bbb', '/bbb'), 'bbb');
+assert.strictEqual(path.basename('/aaa/bbb', 'a/bbb'), 'bbb');
+assert.strictEqual(path.basename('/aaa/bbb', 'bbb'), 'bbb');
+assert.strictEqual(path.basename('/aaa/bbb//', 'bbb'), 'bbb');
+assert.strictEqual(path.basename('/aaa/bbb', 'bb'), 'b');
+assert.strictEqual(path.basename('/aaa/bbb', 'b'), 'bb');
+assert.strictEqual(path.basename('/aaa/bbb'), 'bbb');
+assert.strictEqual(path.basename('/aaa/'), 'aaa');
+assert.strictEqual(path.basename('/aaa/b'), 'b');
+assert.strictEqual(path.basename('/a/b'), 'b');
+assert.strictEqual(path.basename('//a'), 'a');
+assert.strictEqual(path.basename('a', 'a'), '');
 
-tape('path.win32.basename', { skip: true }, function (t) {
-  // On Windows a backslash acts as a path separator.
-  t.strictEqual(path.win32.basename('\\dir\\basename.ext'), 'basename.ext');
-  t.strictEqual(path.win32.basename('\\basename.ext'), 'basename.ext');
-  t.strictEqual(path.win32.basename('basename.ext'), 'basename.ext');
-  t.strictEqual(path.win32.basename('basename.ext\\'), 'basename.ext');
-  t.strictEqual(path.win32.basename('basename.ext\\\\'), 'basename.ext');
-  t.strictEqual(path.win32.basename('foo'), 'foo');
-  t.strictEqual(path.win32.basename('aaa\\bbb', '\\bbb'), 'bbb');
-  t.strictEqual(path.win32.basename('aaa\\bbb', 'a\\bbb'), 'bbb');
-  t.strictEqual(path.win32.basename('aaa\\bbb', 'bbb'), 'bbb');
-  t.strictEqual(path.win32.basename('aaa\\bbb\\\\\\\\', 'bbb'), 'bbb');
-  t.strictEqual(path.win32.basename('aaa\\bbb', 'bb'), 'b');
-  t.strictEqual(path.win32.basename('aaa\\bbb', 'b'), 'bb');
-  t.strictEqual(path.win32.basename('C:'), '');
-  t.strictEqual(path.win32.basename('C:.'), '.');
-  t.strictEqual(path.win32.basename('C:\\'), '');
-  t.strictEqual(path.win32.basename('C:\\dir\\base.ext'), 'base.ext');
-  t.strictEqual(path.win32.basename('C:\\basename.ext'), 'basename.ext');
-  t.strictEqual(path.win32.basename('C:basename.ext'), 'basename.ext');
-  t.strictEqual(path.win32.basename('C:basename.ext\\'), 'basename.ext');
-  t.strictEqual(path.win32.basename('C:basename.ext\\\\'), 'basename.ext');
-  t.strictEqual(path.win32.basename('C:foo'), 'foo');
-  t.strictEqual(path.win32.basename('file:stream'), 'file:stream');
-  t.end();
-});
+// On Windows a backslash acts as a path separator.
+assert.strictEqual(path.win32.basename('\\dir\\basename.ext'), 'basename.ext');
+assert.strictEqual(path.win32.basename('\\basename.ext'), 'basename.ext');
+assert.strictEqual(path.win32.basename('basename.ext'), 'basename.ext');
+assert.strictEqual(path.win32.basename('basename.ext\\'), 'basename.ext');
+assert.strictEqual(path.win32.basename('basename.ext\\\\'), 'basename.ext');
+assert.strictEqual(path.win32.basename('foo'), 'foo');
+assert.strictEqual(path.win32.basename('aaa\\bbb', '\\bbb'), 'bbb');
+assert.strictEqual(path.win32.basename('aaa\\bbb', 'a\\bbb'), 'bbb');
+assert.strictEqual(path.win32.basename('aaa\\bbb', 'bbb'), 'bbb');
+assert.strictEqual(path.win32.basename('aaa\\bbb\\\\\\\\', 'bbb'), 'bbb');
+assert.strictEqual(path.win32.basename('aaa\\bbb', 'bb'), 'b');
+assert.strictEqual(path.win32.basename('aaa\\bbb', 'b'), 'bb');
+assert.strictEqual(path.win32.basename('C:'), '');
+assert.strictEqual(path.win32.basename('C:.'), '.');
+assert.strictEqual(path.win32.basename('C:\\'), '');
+assert.strictEqual(path.win32.basename('C:\\dir\\base.ext'), 'base.ext');
+assert.strictEqual(path.win32.basename('C:\\basename.ext'), 'basename.ext');
+assert.strictEqual(path.win32.basename('C:basename.ext'), 'basename.ext');
+assert.strictEqual(path.win32.basename('C:basename.ext\\'), 'basename.ext');
+assert.strictEqual(path.win32.basename('C:basename.ext\\\\'), 'basename.ext');
+assert.strictEqual(path.win32.basename('C:foo'), 'foo');
+assert.strictEqual(path.win32.basename('file:stream'), 'file:stream');
+assert.strictEqual(path.win32.basename('a', 'a'), '');
 
-tape('On unix a backslash is just treated as any other character.', function (t) {
-  t.strictEqual(path.posix.basename('\\dir\\basename.ext'),
-                     '\\dir\\basename.ext');
-  t.strictEqual(path.posix.basename('\\basename.ext'), '\\basename.ext');
-  t.strictEqual(path.posix.basename('basename.ext'), 'basename.ext');
-  t.strictEqual(path.posix.basename('basename.ext\\'), 'basename.ext\\');
-  t.strictEqual(path.posix.basename('basename.ext\\\\'), 'basename.ext\\\\');
-  t.strictEqual(path.posix.basename('foo'), 'foo');
-  t.end();
-});
+// On unix a backslash is just treated as any other character.
+assert.strictEqual(path.posix.basename('\\dir\\basename.ext'),
+                   '\\dir\\basename.ext');
+assert.strictEqual(path.posix.basename('\\basename.ext'), '\\basename.ext');
+assert.strictEqual(path.posix.basename('basename.ext'), 'basename.ext');
+assert.strictEqual(path.posix.basename('basename.ext\\'), 'basename.ext\\');
+assert.strictEqual(path.posix.basename('basename.ext\\\\'), 'basename.ext\\\\');
+assert.strictEqual(path.posix.basename('foo'), 'foo');
 
-tape('POSIX filenames may include control characters', function (t) {
-  // c.f. http://www.dwheeler.com/essays/fixing-unix-linux-filenames.html
-  var controlCharFilename = "Icon" + (String.fromCharCode(13));
-  t.strictEqual(path.posix.basename(("/a/b/" + controlCharFilename)),
-                     controlCharFilename);
-  t.end();
-});
+// POSIX filenames may include control characters
+// c.f. http://www.dwheeler.com/essays/fixing-unix-linux-filenames.html
+const controlCharFilename = `Icon${String.fromCharCode(13)}`;
+assert.strictEqual(path.posix.basename(`/a/b/${controlCharFilename}`),
+                   controlCharFilename);

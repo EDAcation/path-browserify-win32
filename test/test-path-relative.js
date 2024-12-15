@@ -1,10 +1,13 @@
 'use strict';
-var tape = require('tape');
-var path = require('../');
+require('./common');
+const assert = require('assert');
+const path = require('../');
 
-var relativeTests = {
-  win32:
-    // arguments                     result
+const failures = [];
+
+const relativeTests = [
+  [ path.win32.relative,
+    // Arguments                     result
     [['c:/blah\\blah', 'd:/games', 'd:\\games'],
      ['c:/aaaa/bbbb', 'c:/aaaa', '..'],
      ['c:/aaaa/bbbb', 'c:/cccc', '..\\..\\cccc'],
@@ -28,10 +31,16 @@ var relativeTests = {
      ['\\\\foo\\baz-quux', '\\\\foo\\baz', '..\\baz'],
      ['\\\\foo\\baz', '\\\\foo\\baz-quux', '..\\baz-quux'],
      ['C:\\baz', '\\\\foo\\bar\\baz', '\\\\foo\\bar\\baz'],
-     ['\\\\foo\\bar\\baz', 'C:\\baz', 'C:\\baz']
+     ['\\\\foo\\bar\\baz', 'C:\\baz', 'C:\\baz'],
+     ['c:\\a\\İ', 'c:\\a\\İ\\test.txt', 'test.txt'],
+     ['c:\\İ\\a\\İ', 'c:\\İ\\b\\İ\\test.txt', '..\\..\\b\\İ\\test.txt'],
+     ['c:\\İ\\a\\i̇', 'c:\\İ\\b\\İ\\test.txt', '..\\..\\b\\İ\\test.txt'],
+     ['c:\\i̇\\a\\İ', 'c:\\İ\\b\\İ\\test.txt', '..\\..\\b\\İ\\test.txt'],
+     ['c:\\ß\\a\\ß', 'c:\\ß\\b\\ß\\test.txt', '..\\..\\b\\ß\\test.txt'],
     ],
-  posix:
-    // arguments          result
+  ],
+  [ path.posix.relative,
+    // Arguments          result
     [['/var/lib', '/var', '..'],
      ['/var/lib', '/bin', '../../bin'],
      ['/var/lib', '/var/lib', ''],
@@ -43,24 +52,23 @@ var relativeTests = {
      ['/foo/bar/baz-quux', '/foo/bar/baz', '../baz'],
      ['/foo/bar/baz', '/foo/bar/baz-quux', '../baz-quux'],
      ['/baz-quux', '/baz', '../baz'],
-     ['/baz', '/baz-quux', '../baz-quux']
-    ]
-};
-
-tape('path.posix.relative', function (t) {
-  relativeTests.posix.forEach(function (p) {
-    var expected = p[2];
-    var actual = path.posix.relative(p[0], p[1]);
-    t.strictEqual(actual, expected);
+     ['/baz', '/baz-quux', '../baz-quux'],
+     ['/page1/page2/foo', '/', '../../..'],
+    ],
+  ],
+];
+relativeTests.forEach((test) => {
+  const relative = test[0];
+  test[1].forEach((test) => {
+    const actual = relative(test[0], test[1]);
+    const expected = test[2];
+    if (actual !== expected) {
+      const os = relative === path.win32.relative ? 'win32' : 'posix';
+      const message = `path.${os}.relative(${
+        test.slice(0, 2).map(JSON.stringify).join(',')})\n  expect=${
+        JSON.stringify(expected)}\n  actual=${JSON.stringify(actual)}`;
+      failures.push(`\n${message}`);
+    }
   });
-  t.end();
 });
-
-tape('path.win32.relative', { skip: true }, function (t) {
-  relativeTests.win32.forEach(function (p) {
-    var expected = p[2];
-    var actual = path.win32.relative(p[0], p[1]);
-    t.strictEqual(actual, expected);
-  });
-  t.end();
-});
+assert.strictEqual(failures.length, 0, failures.join(''));

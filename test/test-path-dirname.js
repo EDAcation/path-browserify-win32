@@ -1,58 +1,56 @@
 'use strict';
-var tape = require('tape');
-var path = require('../');
+require('./common');
+const assert = require('assert');
+const path = require('../');
 
-tape('path.posix.dirname', function (t) {
-  t.strictEqual(path.posix.dirname('/a/b/'), '/a');
-  t.strictEqual(path.posix.dirname('/a/b'), '/a');
-  t.strictEqual(path.posix.dirname('/a'), '/');
-  t.strictEqual(path.posix.dirname(''), '.');
-  t.strictEqual(path.posix.dirname('/'), '/');
-  t.strictEqual(path.posix.dirname('////'), '/');
-  t.strictEqual(path.posix.dirname('//a'), '//');
-  t.strictEqual(path.posix.dirname('foo'), '.');
-  t.end();
-});
+assert.strictEqual(path.posix.dirname('/a/b/'), '/a');
+assert.strictEqual(path.posix.dirname('/a/b'), '/a');
+assert.strictEqual(path.posix.dirname('/a'), '/');
+assert.strictEqual(path.posix.dirname(''), '.');
+assert.strictEqual(path.posix.dirname('/'), '/');
+assert.strictEqual(path.posix.dirname('////'), '/');
+assert.strictEqual(path.posix.dirname('//a'), '//');
+assert.strictEqual(path.posix.dirname('foo'), '.');
 
-tape('path.win32.dirname', { skip: true }, function (t) {
-  t.strictEqual(path.win32.dirname('c:\\'), 'c:\\');
-  t.strictEqual(path.win32.dirname('c:\\foo'), 'c:\\');
-  t.strictEqual(path.win32.dirname('c:\\foo\\'), 'c:\\');
-  t.strictEqual(path.win32.dirname('c:\\foo\\bar'), 'c:\\foo');
-  t.strictEqual(path.win32.dirname('c:\\foo\\bar\\'), 'c:\\foo');
-  t.strictEqual(path.win32.dirname('c:\\foo\\bar\\baz'), 'c:\\foo\\bar');
-  t.strictEqual(path.win32.dirname('\\'), '\\');
-  t.strictEqual(path.win32.dirname('\\foo'), '\\');
-  t.strictEqual(path.win32.dirname('\\foo\\'), '\\');
-  t.strictEqual(path.win32.dirname('\\foo\\bar'), '\\foo');
-  t.strictEqual(path.win32.dirname('\\foo\\bar\\'), '\\foo');
-  t.strictEqual(path.win32.dirname('\\foo\\bar\\baz'), '\\foo\\bar');
-  t.strictEqual(path.win32.dirname('c:'), 'c:');
-  t.strictEqual(path.win32.dirname('c:foo'), 'c:');
-  t.strictEqual(path.win32.dirname('c:foo\\'), 'c:');
-  t.strictEqual(path.win32.dirname('c:foo\\bar'), 'c:foo');
-  t.strictEqual(path.win32.dirname('c:foo\\bar\\'), 'c:foo');
-  t.strictEqual(path.win32.dirname('c:foo\\bar\\baz'), 'c:foo\\bar');
-  t.strictEqual(path.win32.dirname('file:stream'), '.');
-  t.strictEqual(path.win32.dirname('dir\\file:stream'), 'dir');
-  t.strictEqual(path.win32.dirname('\\\\unc\\share'),
-                '\\\\unc\\share');
-  t.strictEqual(path.win32.dirname('\\\\unc\\share\\foo'),
-                '\\\\unc\\share\\');
-  t.strictEqual(path.win32.dirname('\\\\unc\\share\\foo\\'),
-                '\\\\unc\\share\\');
-  t.strictEqual(path.win32.dirname('\\\\unc\\share\\foo\\bar'),
-                '\\\\unc\\share\\foo');
-  t.strictEqual(path.win32.dirname('\\\\unc\\share\\foo\\bar\\'),
-                '\\\\unc\\share\\foo');
-  t.strictEqual(path.win32.dirname('\\\\unc\\share\\foo\\bar\\baz'),
-                '\\\\unc\\share\\foo\\bar');
-  t.strictEqual(path.win32.dirname('/a/b/'), '/a');
-  t.strictEqual(path.win32.dirname('/a/b'), '/a');
-  t.strictEqual(path.win32.dirname('/a'), '/');
-  t.strictEqual(path.win32.dirname(''), '.');
-  t.strictEqual(path.win32.dirname('/'), '/');
-  t.strictEqual(path.win32.dirname('////'), '/');
-  t.strictEqual(path.win32.dirname('foo'), '.');
-  t.end();
-});
+assert.strictEqual(path.win32.dirname('c:\\'), 'c:\\');
+assert.strictEqual(path.win32.dirname('c:\\foo'), 'c:\\');
+assert.strictEqual(path.win32.dirname('c:\\foo\\'), 'c:\\');
+assert.strictEqual(path.win32.dirname('c:\\foo\\bar'), 'c:\\foo');
+assert.strictEqual(path.win32.dirname('c:\\foo\\bar\\'), 'c:\\foo');
+assert.strictEqual(path.win32.dirname('c:\\foo\\bar\\baz'), 'c:\\foo\\bar');
+assert.strictEqual(path.win32.dirname('c:\\foo bar\\baz'), 'c:\\foo bar');
+assert.strictEqual(path.win32.dirname('\\'), '\\');
+assert.strictEqual(path.win32.dirname('\\foo'), '\\');
+assert.strictEqual(path.win32.dirname('\\foo\\'), '\\');
+assert.strictEqual(path.win32.dirname('\\foo\\bar'), '\\foo');
+assert.strictEqual(path.win32.dirname('\\foo\\bar\\'), '\\foo');
+assert.strictEqual(path.win32.dirname('\\foo\\bar\\baz'), '\\foo\\bar');
+assert.strictEqual(path.win32.dirname('\\foo bar\\baz'), '\\foo bar');
+assert.strictEqual(path.win32.dirname('c:'), 'c:');
+assert.strictEqual(path.win32.dirname('c:foo'), 'c:');
+assert.strictEqual(path.win32.dirname('c:foo\\'), 'c:');
+assert.strictEqual(path.win32.dirname('c:foo\\bar'), 'c:foo');
+assert.strictEqual(path.win32.dirname('c:foo\\bar\\'), 'c:foo');
+assert.strictEqual(path.win32.dirname('c:foo\\bar\\baz'), 'c:foo\\bar');
+assert.strictEqual(path.win32.dirname('c:foo bar\\baz'), 'c:foo bar');
+assert.strictEqual(path.win32.dirname('file:stream'), '.');
+assert.strictEqual(path.win32.dirname('dir\\file:stream'), 'dir');
+assert.strictEqual(path.win32.dirname('\\\\unc\\share'),
+                   '\\\\unc\\share');
+assert.strictEqual(path.win32.dirname('\\\\unc\\share\\foo'),
+                   '\\\\unc\\share\\');
+assert.strictEqual(path.win32.dirname('\\\\unc\\share\\foo\\'),
+                   '\\\\unc\\share\\');
+assert.strictEqual(path.win32.dirname('\\\\unc\\share\\foo\\bar'),
+                   '\\\\unc\\share\\foo');
+assert.strictEqual(path.win32.dirname('\\\\unc\\share\\foo\\bar\\'),
+                   '\\\\unc\\share\\foo');
+assert.strictEqual(path.win32.dirname('\\\\unc\\share\\foo\\bar\\baz'),
+                   '\\\\unc\\share\\foo\\bar');
+assert.strictEqual(path.win32.dirname('/a/b/'), '/a');
+assert.strictEqual(path.win32.dirname('/a/b'), '/a');
+assert.strictEqual(path.win32.dirname('/a'), '/');
+assert.strictEqual(path.win32.dirname(''), '.');
+assert.strictEqual(path.win32.dirname('/'), '/');
+assert.strictEqual(path.win32.dirname('////'), '/');
+assert.strictEqual(path.win32.dirname('foo'), '.');

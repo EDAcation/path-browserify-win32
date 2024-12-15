@@ -1,10 +1,12 @@
 'use strict';
-var tape = require('tape');
-var path = require('../');
+require('./common');
+const assert = require('assert');
+const path = require('../');
 
-var slashRE = /\//g;
+const failures = [];
+const slashRE = /\//g;
 
-var pairs = [
+const testPaths = [
   [__filename, '.js'],
   ['', ''],
   ['/path/to/file', ''],
@@ -47,50 +49,52 @@ var pairs = [
   ['file/', ''],
   ['file//', ''],
   ['file./', '.'],
-  ['file.//', '.'] ];
+  ['file.//', '.'],
+];
 
-tape('path.posix.extname', function (t) {
-  pairs.forEach(function (p) {
-    var input = p[0];
-    var expected = p[1];
-    t.strictEqual(expected, path.posix.extname(input));
-  });
-  t.end();
-});
+for (const testPath of testPaths) {
+  const expected = testPath[1];
+  const extNames = [path.posix.extname, path.win32.extname];
+  for (const extname of extNames) {
+    let input = testPath[0];
+    let os;
+    if (extname === path.win32.extname) {
+      input = input.replace(slashRE, '\\');
+      os = 'win32';
+    } else {
+      os = 'posix';
+    }
+    const actual = extname(input);
+    const message = `path.${os}.extname(${JSON.stringify(input)})\n  expect=${
+      JSON.stringify(expected)}\n  actual=${JSON.stringify(actual)}`;
+    if (actual !== expected)
+      failures.push(`\n${message}`);
+  }
+  const input = `C:${testPath[0].replace(slashRE, '\\')}`;
+  const actual = path.win32.extname(input);
+  const message = `path.win32.extname(${JSON.stringify(input)})\n  expect=${
+    JSON.stringify(expected)}\n  actual=${JSON.stringify(actual)}`;
+  if (actual !== expected)
+    failures.push(`\n${message}`);
+}
+assert.strictEqual(failures.length, 0, failures.join(''));
 
-tape('path.win32.extname', { skip: true }, function (t) {
-  pairs.forEach(function (p) {
-    var input = p[0].replace(slashRE, '\\');
-    var expected = p[1];
-    t.strictEqual(expected, path.win32.extname(input));
-    t.strictEqual(expected, path.win32.extname("C:" + input));
-  });
-  t.end();
-});
+// On Windows, backslash is a path separator.
+assert.strictEqual(path.win32.extname('.\\'), '');
+assert.strictEqual(path.win32.extname('..\\'), '');
+assert.strictEqual(path.win32.extname('file.ext\\'), '.ext');
+assert.strictEqual(path.win32.extname('file.ext\\\\'), '.ext');
+assert.strictEqual(path.win32.extname('file\\'), '');
+assert.strictEqual(path.win32.extname('file\\\\'), '');
+assert.strictEqual(path.win32.extname('file.\\'), '.');
+assert.strictEqual(path.win32.extname('file.\\\\'), '.');
 
-tape('path.win32.extname backslash', { skip: true }, function (t) {
-  // On Windows, backslash is a path separator.
-  t.strictEqual(path.win32.extname('.\\'), '');
-  t.strictEqual(path.win32.extname('..\\'), '');
-  t.strictEqual(path.win32.extname('file.ext\\'), '.ext');
-  t.strictEqual(path.win32.extname('file.ext\\\\'), '.ext');
-  t.strictEqual(path.win32.extname('file\\'), '');
-  t.strictEqual(path.win32.extname('file\\\\'), '');
-  t.strictEqual(path.win32.extname('file.\\'), '.');
-  t.strictEqual(path.win32.extname('file.\\\\'), '.');
-  t.end();
-});
-
-tape('path.posix.extname backslash', function (t) {
-  // On *nix, backslash is a valid name component like any other character.
-  t.strictEqual(path.posix.extname('.\\'), '');
-  t.strictEqual(path.posix.extname('..\\'), '.\\');
-  t.strictEqual(path.posix.extname('file.ext\\'), '.ext\\');
-  t.strictEqual(path.posix.extname('file.ext\\\\'), '.ext\\\\');
-  t.strictEqual(path.posix.extname('file\\'), '');
-  t.strictEqual(path.posix.extname('file\\\\'), '');
-  t.strictEqual(path.posix.extname('file.\\'), '.\\');
-  t.strictEqual(path.posix.extname('file.\\\\'), '.\\\\');
-  t.end();
-});
-
+// On *nix, backslash is a valid name component like any other character.
+assert.strictEqual(path.posix.extname('.\\'), '');
+assert.strictEqual(path.posix.extname('..\\'), '.\\');
+assert.strictEqual(path.posix.extname('file.ext\\'), '.ext\\');
+assert.strictEqual(path.posix.extname('file.ext\\\\'), '.ext\\\\');
+assert.strictEqual(path.posix.extname('file\\'), '');
+assert.strictEqual(path.posix.extname('file\\\\'), '');
+assert.strictEqual(path.posix.extname('file.\\'), '.\\');
+assert.strictEqual(path.posix.extname('file.\\\\'), '.\\\\');
