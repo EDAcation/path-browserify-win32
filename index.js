@@ -1557,4 +1557,5 @@ posix.posix = win32.posix = posix;
 win32._makeLong = win32.toNamespacedPath;
 posix._makeLong = posix.toNamespacedPath;
 
-module.exports = posix;
+const isWindows = typeof process == 'object' && process.platform == 'win32';
+module.exports = isWindows ? win32 : posix;
